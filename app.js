@@ -14,6 +14,7 @@ var accessKeys = require('./routes/accessKeys');
 var sessions = require('./routes/sessions');
 var account = require('./routes/account');
 var users = require('./routes/users');
+var custom = require('./routes/custom');
 var apps = require('./routes/apps');
 var AppError = require('./core/app-error');
 var log4js = require('log4js');
@@ -52,21 +53,24 @@ if (_.get(config, 'common.storageType') === 'local') {
 
     log.debug("config common.storageDir value: " + localStorageDir);
 
-    if (!fs.existsSync(localStorageDir)) {
+    // shenglin change
+    if (!fs.existsSync(`${__dirname}`+localStorageDir)) {
       var e = new Error(`Please create dir ${localStorageDir}`);
       log.error(e);
       throw e;
     }
     try {
       log.debug('checking storageDir fs.W_OK | fs.R_OK');
-      fs.accessSync(localStorageDir, fs.W_OK | fs.R_OK);
+      
+      // shenglin change
+      fs.accessSync(`${__dirname}`+localStorageDir, fs.W_OK | fs.R_OK);
       log.debug('storageDir fs.W_OK | fs.R_OK is ok');
     } catch (e) {
       log.error(e);
       throw e;
     }
     log.debug("static download uri value: " + _.get(config, 'local.public', '/download'));
-    app.use(_.get(config, 'local.public', '/download'), express.static(localStorageDir));
+    app.use(_.get(config, 'local.public', '/download'), express.static(`${__dirname}`+localStorageDir));
   } else {
     log.error('please config local storageDir');
   }
@@ -79,6 +83,10 @@ app.use('/sessions', sessions);
 app.use('/account', account);
 app.use('/users', users);
 app.use('/apps', apps);
+
+// shenglin change
+app.use('/custom', custom);
+app.use('/downloadApk', express.static(`${__dirname}/public/uploads`));
 
 // development error handler
 // will print stacktrace
