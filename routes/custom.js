@@ -5,10 +5,11 @@ var models = require('../models');
 var router = express.Router();
 var multer = require('multer');
 
-let diskPath = '../public/uploads';
+let apkDiskTemp = '../apkFiles/temp';
+let apkDisk = '../apkFiles';
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, diskPath)
+    cb(null, apkDiskTemp)
   },
   filename: function (req, file, cb) {
     var fileFormat = (file.originalname).split(".");
@@ -38,10 +39,17 @@ router.post('/uploadApk', (req, res) => {
     var fileExt = fileFormat[fileFormat.length - 1];
     var appName = req.body.appName;
     var appVersion = req.body.appVersion;
+    var latest = req.body.latest;
 
-    var readStream = fs.createReadStream(path.resolve(__dirname, diskPath, req.body.files[0]));
-    var writeStream = fs.createWriteStream(path.resolve(__dirname, diskPath, appName + "." + appVersion + "." + fileExt));
+    var readStream = fs.createReadStream(path.resolve(__dirname, apkDiskTemp, req.body.files[0]));
+    var writeStream = fs.createWriteStream(path.resolve(__dirname, apkDisk, appName + "." + appVersion + "." + fileExt));
     readStream.pipe(writeStream);
+    if (latest) {
+      var latestStream = fs.createWriteStream(path.resolve(__dirname, apkDisk, appName + ".latest." + fileExt));
+      readStream.pipe(latestStream);
+    }
+    readStream.destroy();
+    fs.unlinkSync(path.resolve(__dirname, apkDiskTemp, req.body.files[0]));
     //文件信息在req.file或者req.files中显示。
     res.send({d: 123})
   });

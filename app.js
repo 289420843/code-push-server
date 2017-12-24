@@ -61,7 +61,7 @@ if (_.get(config, 'common.storageType') === 'local') {
     }
     try {
       log.debug('checking storageDir fs.W_OK | fs.R_OK');
-      
+
       // shenglin change
       fs.accessSync(`${__dirname}`+localStorageDir, fs.W_OK | fs.R_OK);
       log.debug('storageDir fs.W_OK | fs.R_OK is ok');
@@ -86,7 +86,7 @@ app.use('/apps', apps);
 
 // shenglin change
 app.use('/custom', custom);
-app.use('/downloadApk', express.static(`${__dirname}/public/uploads`));
+app.use('/downloadApk', express.static(`${__dirname}/apkFiles`));
 
 // development error handler
 // will print stacktrace
