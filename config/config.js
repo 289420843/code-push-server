@@ -13,7 +13,7 @@ config.development = {
     logging: false
   },
   local: {
-    storageDir: path.join(__dirname, "/hotfix/storage"),
+    storageDir: path.join(__dirname, "../hotfix/storage"),
     downloadUrl: "http://210.41.215.16:3000/download",
     public: '/download'
   },
