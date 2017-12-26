@@ -55,8 +55,6 @@ router.post('/uploadApk', (req, res) => {
 });
 
 function getApkContentLength(appName, appVersion) {
-
-
   const promise = new Promise((resolve, reject) => {
     fs.stat(path.resolve(__dirname, apkDisk, appName + "." + appVersion + ".apk"), (err, fileStat) => {
       if (err) {
