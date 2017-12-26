@@ -1,4 +1,5 @@
 ﻿var os = require('os');
+var path = require('path');
 
 var config = {};
 config.development = {
@@ -12,7 +13,7 @@ config.development = {
     logging: false
   },
   local: {
-    storageDir: "/hotfix/storage",
+    storageDir: path.join(__dirname, "/hotfix/storage"),
     downloadUrl: "http://210.41.215.16:3000/download",
     public: '/download'
   },
@@ -21,7 +22,7 @@ config.development = {
   },
   common: {
     //codePushWebUrl: "http://210.41.215.16:3001",
-    loginSecret:"orOVy59Z4YSfwughhgCyUgcy",
+    loginSecret: "orOVy59Z4YSfwughhgCyUgcy",
     tryLoginTimes: 10,
     diffNums: 3,
     dataDir: "/WebSite/code-push-server/hotfix/data",
@@ -33,16 +34,16 @@ config.development = {
     default: {
       host: "127.0.0.1",
       port: 6379,
-      password:"cdutcm@2017@123",
+      password: "cdutcm@2017@123",
       retry_strategy: function (options) {
         if (options.error.code === 'ECONNREFUSED') {
           return new Error('The server refused the connection');
         }
         if (options.total_retry_time > 1000 * 60 * 60) {
-            return new Error('Retry time exhausted');
+          return new Error('Retry time exhausted');
         }
         if (options.times_connected > 10) {
-            return undefined;
+          return undefined;
         }
         return Math.max(options.attempt * 100, 3000);
       }
@@ -51,12 +52,12 @@ config.development = {
 }
 config.development.log4js = {
   appenders: [
-    { type: 'console'}
+    {type: 'console'}
   ],
-  levels : {
+  levels: {
     "[all]": "ERROR",
     "startup": "INFO",
-    "http" : "INFO"
+    "http": "INFO"
   }
 }
 module.exports = config;

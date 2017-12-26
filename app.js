@@ -53,24 +53,21 @@ if (_.get(config, 'common.storageType') === 'local') {
 
     log.debug("config common.storageDir value: " + localStorageDir);
 
-    // shenglin change
-    if (!fs.existsSync(`${__dirname}`+localStorageDir)) {
+    if (!fs.existsSync(localStorageDir)) {
       var e = new Error(`Please create dir ${localStorageDir}`);
       log.error(e);
       throw e;
     }
     try {
       log.debug('checking storageDir fs.W_OK | fs.R_OK');
-
-      // shenglin change
-      fs.accessSync(`${__dirname}`+localStorageDir, fs.W_OK | fs.R_OK);
+      fs.accessSync(localStorageDir, fs.W_OK | fs.R_OK);
       log.debug('storageDir fs.W_OK | fs.R_OK is ok');
     } catch (e) {
       log.error(e);
       throw e;
     }
     log.debug("static download uri value: " + _.get(config, 'local.public', '/download'));
-    app.use(_.get(config, 'local.public', '/download'), express.static(`${__dirname}`+localStorageDir));
+    app.use(_.get(config, 'local.public', '/download'), express.static(localStorageDir));
   } else {
     log.error('please config local storageDir');
   }
