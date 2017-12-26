@@ -53,8 +53,30 @@ router.post('/uploadApk', (req, res) => {
     res.send({d: 123})
   });
 });
+
+function getApkContentLength(appName, appVersion) {
+
+
+  const promise = new Promise((resolve, reject) => {
+    fs.stat(path.resolve(__dirname, apkDisk, appName + "." + appVersion + ".apk"), (err, fileStat) => {
+      if (err) {
+        throw err;
+      }
+      let versionSize = fileStat.size;
+      fs.stat(path.resolve(__dirname, apkDisk, appName + ".latest.apk"), (err, fileStat) => {
+        let result = {versionSize};
+        if (fileStat) {
+          result.latestSize = fileStat.size;
+        }
+        resolve(result);
+      });
+    });
+  });
+  return promise;
+}
 router.post("/getLatestVersion", (req, res) => {
   var deploymentKey = req.body.deploymentKey;
+  var appName = req.body.appName;
   models.Deployments.findOne({where: {deployment_key: deploymentKey}}).then((data) => {
     if (data) {
       models.DeploymentsVersions.findOne({
@@ -62,7 +84,17 @@ router.post("/getLatestVersion", (req, res) => {
         order: [["created_at", "DESC"]]
       }).then((deploymentsVersion) => {
         if (deploymentsVersion) {
-          res.send({Data: deploymentsVersion.dataValues, Success: true,});
+          // 获取文件大小
+          getApkContentLength(appName, deploymentsVersion.dataValues.app_version).then((sizeInfo) => {
+            let sendData = {
+              ...deploymentsVersion.dataValues,
+              ...sizeInfo,
+            };
+            res.send({Data: sendData, Success: true,});
+          }).catch((err) => {
+            res.send({Data: null, Success: true,});
+          });
+
         } else {
           res.send({Data: null, Success: true,});
         }
