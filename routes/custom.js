@@ -48,7 +48,6 @@ router.post('/uploadApk', (req, res) => {
       var latestStream = fs.createWriteStream(path.resolve(__dirname, apkDisk, appName + ".latest." + fileExt));
       readStream.pipe(latestStream);
     }
-    readStream.destroy();
     fs.unlinkSync(path.resolve(__dirname, apkDiskTemp, req.body.files[0]));
     //文件信息在req.file或者req.files中显示。
     res.send({d: 123})
