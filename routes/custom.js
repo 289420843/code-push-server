@@ -86,10 +86,10 @@ router.post("/getLatestVersion", (req, res) => {
         if (deploymentsVersion) {
           // 获取文件大小
           getApkContentLength(appName, deploymentsVersion.dataValues.app_version).then((sizeInfo) => {
-            let sendData = {
-              ...deploymentsVersion.dataValues,
-              ...sizeInfo,
-            };
+            console.warn("@cc deploymentsVersion", deploymentsVersion)
+            let sendData = deploymentsVersion.dataValues;
+            sendData.latestSize = sizeInfo.latestSize;
+            sendData.versionSize = sizeInfo.versionSize;
             res.send({Data: sendData, Success: true,});
           }).catch((err) => {
             res.send({Data: null, Success: true,});
